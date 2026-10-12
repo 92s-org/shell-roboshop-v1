@@ -9,18 +9,18 @@ user_id=$(id -u)
 scripts_dir=$(dirname "$(realpath "$0")")   # folder of this script, works from any directory
 script_name=$(basename "$0" .sh)           # 01-mongodb.sh -> 01-mongodb
 logs_folder="/var/log/roboshop"
-logs_file="$LOGS_FOLDER/$script_name.log"
+logs_file="$logs_folder/$script_name.log"
 start_time=$(date +%s)
 timestamp=$(date "+%Y-%m-%d %H:%M:%S")
 
-if [ $USERID -ne 0 ]; then
+if [ $user_id -ne 0 ]; then
     echo -e "$TIMESTAMP [ERROR] $R Please run this script with root access $N"
     exit 1
 fi
 
-mkdir -p $LOGS_FOLDER
-chown -R ec2-user:ec2-user $LOGS_FOLDER
-chmod -R 755 $LOGS_FOLDER
+mkdir -p $logs_folder
+chown -R ec2-user:ec2-user $logs_folder
+chmod -R 755 $logs_folder
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
