@@ -1,0 +1,55 @@
+#!/bin/bash
+
+R="\e[31m"
+G="\e[32m"
+Y="\e[33m"
+N="\e[0m"
+user_id=$(id -u)
+ 
+scripts_dir=$(dirname "$(realpath "$0")")   # folder of this script, works from any directory
+script_name=$(basename "$0" .sh)           # 01-mongodb.sh -> 01-mongodb
+logs_folder="/var/log/roboshop"
+logs_file="$LOGS_FOLDER/$script_name.log"
+start_time=$(date +%s)
+timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+
+if [ $USERID -ne 0 ]; then
+    echo -e "$TIMESTAMP [ERROR] $R Please run this script with root access $N"
+    exit 1
+fi
+
+mkdir -p $LOGS_FOLDER
+chown -R ec2-user:ec2-user $LOGS_FOLDER
+chmod -R 755 $LOGS_FOLDER
+
+VALIDATE(){
+    if [ $1 -ne 0 ]; then
+        echo -e "$TIMESTAMP [ERROR] $2 ... $R FAILURE $N" | tee -a $LOGS_FILE
+        exit 1
+    else
+        echo -e "$TIMESTAMP [INFO] $2 ... $G SUCCESS $N" | tee -a $LOGS_FILE
+    fi
+}
+
+cp "$scripts_dir/mongo.repo" /etc/yum.repos.d/mongo.repo
+VALIDATE $? "Adding Mongo repo"
+
+dnf install mongodb-org -y &>> $LOGS_FILE
+VALIDATE $? "Installing MongoDB"
+
+systemctl enable --now mongod
+VALIDATE $? "Starting and enabling MongoDB"
+
+sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mongod.conf
+VALIDATE $? "Allowing remote connections to MongoDB"
+
+systemctl restart mongod
+VALIDATE $? "Restarting MongoDB"
+
+PING=$(mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' 2>&1)
+echo "ping result: $PING" | LOG
+[ "$PING" = "1" ]
+VALIDATE $? "MongoDB responds to ping"
+
+end_time=$(date +%s)
+echo -e "$timestamp [INFO] ===== $script_name completed in ${G}$((end_time - start_time)) seconds${N} =====" | tee -a "$LOGS_FILE"
