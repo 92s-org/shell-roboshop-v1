@@ -47,7 +47,7 @@ systemctl restart mongod
 VALIDATE $? "Restarting MongoDB"
 
 PING=$(mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' 2>&1)
-echo "ping result: $PING" | LOG
+echo "ping result: $PING" | tee -a $logs_file
 [ "$PING" = "1" ]
 VALIDATE $? "MongoDB responds to ping"
 
