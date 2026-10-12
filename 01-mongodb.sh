@@ -24,17 +24,17 @@ chmod -R 755 $logs_folder
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-        echo -e "$TIMESTAMP [ERROR] $2 ... $R FAILURE $N" | tee -a $LOGS_FILE
+        echo -e "$TIMESTAMP [ERROR] $2 ... $R FAILURE $N" | tee -a $logs_file
         exit 1
     else
-        echo -e "$TIMESTAMP [INFO] $2 ... $G SUCCESS $N" | tee -a $LOGS_FILE
+        echo -e "$TIMESTAMP [INFO] $2 ... $G SUCCESS $N" | tee -a $logs_file
     fi
 }
 
 cp "$scripts_dir/mongo.repo" /etc/yum.repos.d/mongo.repo
 VALIDATE $? "Adding Mongo repo"
 
-dnf install mongodb-org -y &>> $LOGS_FILE
+dnf install mongodb-org -y &>> $logs_file
 VALIDATE $? "Installing MongoDB"
 
 systemctl enable --now mongod
@@ -52,4 +52,4 @@ echo "ping result: $PING" | LOG
 VALIDATE $? "MongoDB responds to ping"
 
 end_time=$(date +%s)
-echo -e "$timestamp [INFO] ===== $script_name completed in ${G}$((end_time - start_time)) seconds${N} =====" | tee -a "$LOGS_FILE"
+echo -e "$timestamp [INFO] ===== $script_name completed in ${G}$((end_time - start_time)) seconds${N} =====" | tee -a "$logs_file"
