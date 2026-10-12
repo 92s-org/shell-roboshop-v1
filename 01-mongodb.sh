@@ -11,10 +11,12 @@ script_name=$(basename "$0" .sh)           # 01-mongodb.sh -> 01-mongodb
 logs_folder="/var/log/roboshop"
 logs_file="$logs_folder/$script_name.log"
 start_time=$(date +%s)
-timestamp=$(date "+%Y-%m-%d %H:%M:%S")
+timestamp(){
+    date "+%Y-%m-%d %H:%M:%S"
+}
 
 if [ $user_id -ne 0 ]; then
-    echo -e "$timestamp [ERROR] $R Please run this script with root access $N"
+    echo -e "$(timestamp) [ERROR] $R Please run this script with root access $N"
     exit 1
 fi
 
@@ -24,17 +26,17 @@ chmod -R 755 $logs_folder
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-        echo -e "$timestamp [ERROR] $2 ... $R FAILURE $N" | tee -a $logs_file
+        echo -e "$(timestamp) [ERROR] $2 ... ${R}FAILURE${N}" | tee -a "$logs_file"
         exit 1
     else
-        echo -e "$timestamp [INFO] $2 ... $G SUCCESS $N" | tee -a $logs_file
+        echo -e "$(timestamp) [INFO] $2 ... ${G}SUCCESS{$N}" | tee -a "$logs_file"
     fi
 }
 
 cp "$scripts_dir/mongo.repo" /etc/yum.repos.d/mongo.repo
 VALIDATE $? "Adding Mongo repo"
 
-dnf install mongodb-org -y &>> $logs_file
+dnf install mongodb-org -y &>> "$logs_file"
 VALIDATE $? "Installing MongoDB"
 
 systemctl enable --now mongod
@@ -47,4 +49,4 @@ systemctl restart mongod
 VALIDATE $? "Restarting MongoDB"
 
 end_time=$(date +%s)
-echo -e "$timestamp [INFO] ===== $script_name completed in ${G}$((end_time - start_time)) seconds${N} =====" | tee -a "$logs_file"
+echo -e "$(timestamp) [INFO] ===== $script_name completed in ${G}$((end_time - start_time)) seconds${N} =====" | tee -a ""$logs_file""
