@@ -14,7 +14,7 @@ start_time=$(date +%s)
 timestamp=$(date "+%Y-%m-%d %H:%M:%S")
 
 if [ $user_id -ne 0 ]; then
-    echo -e "$TIMESTAMP [ERROR] $R Please run this script with root access $N"
+    echo -e "$timestamp [ERROR] $R Please run this script with root access $N"
     exit 1
 fi
 
@@ -24,10 +24,10 @@ chmod -R 755 $logs_folder
 
 VALIDATE(){
     if [ $1 -ne 0 ]; then
-        echo -e "$TIMESTAMP [ERROR] $2 ... $R FAILURE $N" | tee -a $logs_file
+        echo -e "$timestamp [ERROR] $2 ... $R FAILURE $N" | tee -a $logs_file
         exit 1
     else
-        echo -e "$TIMESTAMP [INFO] $2 ... $G SUCCESS $N" | tee -a $logs_file
+        echo -e "$timestamp [INFO] $2 ... $G SUCCESS $N" | tee -a $logs_file
     fi
 }
 
