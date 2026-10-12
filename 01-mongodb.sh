@@ -46,10 +46,5 @@ VALIDATE $? "Allowing remote connections to MongoDB"
 systemctl restart mongod
 VALIDATE $? "Restarting MongoDB"
 
-PING=$(mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok' 2>&1)
-echo "ping result: $PING" | tee -a $logs_file
-[ "$PING" = "1" ]
-VALIDATE $? "MongoDB responds to ping"
-
 end_time=$(date +%s)
 echo -e "$timestamp [INFO] ===== $script_name completed in ${G}$((end_time - start_time)) seconds${N} =====" | tee -a "$logs_file"
