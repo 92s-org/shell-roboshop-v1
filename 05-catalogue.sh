@@ -12,7 +12,7 @@ logs_folder="/var/log/roboshop"
 logs_file="$logs_folder/$script_name.log"
 start_time=$(date +%s)
 app_name="catalogue"
-domain_name="daws92s.shop"                  # change this for your domain
+domain_name="daws92s.store"                  # change this for your domain
 mongodb_host="mongodb.$domain_name"
 timestamp(){
     date "+%Y-%m-%d %H:%M:%S"
